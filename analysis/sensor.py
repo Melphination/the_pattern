@@ -3,6 +3,7 @@ from utils.connect_db import users
 
 
 def sgn(x):
+    """부호 함수"""
     if x > 0:
         return 1
     elif x < 0:
@@ -12,7 +13,6 @@ def sgn(x):
 
 class Sensor:
     def __init__(self, sensor_id, def_input=[]):
-        # sensor_id: 각각의 센서만의 고유의 id
         self.id = sensor_id
         self.def_input = def_input
         self.input = copy.deepcopy(def_input)
@@ -20,20 +20,23 @@ class Sensor:
         self.ignore_sgn = False
 
     def update(self):
+        """센서 값 업데이트"""
         self.prev_input = copy.deepcopy(self.input)
         self.input = self.inputs()
 
     def inputs(self):
+        """센서 값 생성"""
         return self.def_input
 
     def get_sgn(self):
         return sgn(self.get_diff())
 
-    # 유의미한 값인가
     def is_valid(self):
+        """센서 값 유효성 검사"""
         return True
 
     def get_diff(self):
+        """센서 값 차이 계산"""
         return 0
 
 

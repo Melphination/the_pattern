@@ -1,8 +1,5 @@
 # THE PATTERN
 ## ATPase
-## TODO
-<input type="checkbox"/>코드 정리하기<br>
-<input type="checkbox"/>버그 찾고 고치기<br>
 ## Credit
 ### AI
 1. Ideogram: 로고 이미지 생성

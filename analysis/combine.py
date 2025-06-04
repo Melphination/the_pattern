@@ -1,15 +1,11 @@
 from utils.connect_db import users
-
-# 시간 기반 패턴 중 중복 제거 대상
-dupli_pat = ["air", "study", "sleep"]
-
-# 정량값 기반 패턴 중 중복 제거 대상
-off_pat = ["light_off"]
+from utils.pattern_types import TIME_PATTERNS, OFF_PATTERN
 
 
 def combine():
+    """중복된 패턴 제거"""
     for user in users.find():
-        for pat in dupli_pat:
+        for pat in TIME_PATTERNS:
             patterns = user["patterns"][pat]
 
             # 문자열을 기준으로 정렬: datetime 문자열 + 끝/시작 + 패턴 추가 주체
@@ -48,7 +44,7 @@ def combine():
                 i = ind
 
         # 정량값 기반 패턴은 단순히 중복 제거
-        for pat in off_pat:
+        if pat == OFF_PATTERN:
             user["patterns"][pat] = list(set(user["patterns"][pat]))
 
         # 수정된 patterns 필드를 DB에 반영

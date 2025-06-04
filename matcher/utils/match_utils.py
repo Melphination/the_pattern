@@ -17,7 +17,7 @@ from matcher.utils.user_utils import get_category
 
 def execute_matching(root: tk.Tk, progress_bar) -> List[Any]:
     """메인 매칭 실행 함수"""
-    print("Starting greedy matching")
+    print("그리디 매칭 시작")
 
     # 1. 데이터 전처리
     preprocess_data(progress_bar, root)
@@ -37,7 +37,7 @@ def execute_matching(root: tk.Tk, progress_bar) -> List[Any]:
     progress_bar["value"] = 70
     root.update()
 
-    print("Greedy matching finished")
+    print("그리디 매칭 완료")
     return matched_pairs
 
 
@@ -63,12 +63,12 @@ def assign_rooms(matched_pairs: List[Any], progress_bar, root: tk.Tk):
 
 def preprocess_data(progress_bar, root):
     """데이터 전처리"""
-    print("Removing duplicates")
+    print("중복된 패턴 제거")
     combine()
     progress_bar["value"] = 10
     root.update()
 
-    print("Summarizing patterns")
+    print("패턴 정리")
     users = users_db.find()
     for user in users:
         summary = summarize(user)

@@ -9,13 +9,13 @@ class BaseWindow:
         self.error_labels = []
 
     def clear_widgets(self, widgets=None):
-        """위젯들을 제거"""
+        """위젯 제거"""
         widgets_to_clear = widgets or self.widgets
         for widget in widgets_to_clear:
             widget.destroy()
 
     def clear_errors(self):
-        """에러 라벨들을 제거"""
+        """에러 메시지 제거"""
         for label in self.error_labels:
             label.destroy()
         self.error_labels.clear()

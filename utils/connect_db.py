@@ -17,10 +17,8 @@ try:
     client.admin.command("ping")
     print("데이터베이스에 정상적으로 연결되었습니다.")
 
-    # 연결에 성공하면 데이터베이스와 컬렉션 참조 저장
     users = client["SSHS-Matcher"]["User"]
     rooms = client["SSHS-Matcher"]["Room"]
 except Exception as e:
-    # 연결 실패 시 에러 출력
     print(e)
     sys.exit()

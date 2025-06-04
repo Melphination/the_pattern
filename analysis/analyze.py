@@ -72,6 +72,7 @@ items = list(combinations.items())
 
 
 def analyze():
+    """패턴 분석"""
     print("Starting analysis...")
     while True:  # 무한 루프 - 항상 센서 상태를 감시
         for sensor in sensors:
