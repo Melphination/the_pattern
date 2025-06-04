@@ -1,0 +1,1 @@
+pyinstaller main.py --onedir --add-data="sounds/button.mp3;sounds" --add-data="images/logo.ico;images" --add-data="images/logo.png;images"
