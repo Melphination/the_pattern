@@ -84,7 +84,7 @@ def load_and_shuffle_users() -> List[List[Any]]:
 
     users_by_category = []
     for gender, grade in categories:
-        users = users_db.find({"gender": gender, "grade": grade})
+        users = list(users_db.find({"gender": gender, "grade": grade}))
         shuffle(users)
         users_by_category.append(users)
 

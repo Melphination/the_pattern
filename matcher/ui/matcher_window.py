@@ -6,6 +6,7 @@ from utils.verify_admin import verify_admin
 from utils.button import Button
 from utils.base_window import BaseWindow
 from utils.connect_db import rooms as rooms_db
+from matcher.utils.match_utils import execute_matching, assign_rooms
 
 
 class MatcherWindow(BaseWindow):
@@ -65,12 +66,12 @@ class MatcherWindow(BaseWindow):
         self.progress_bar["value"] = 0
 
         # 매칭 실행
-        matched_pairs = self.matching_service.execute_matching(
+        matched_pairs = execute_matching(
             self.root, self.progress_bar
         )
 
         # 방 배정
-        self.matching_service.assign_rooms(matched_pairs, self.progress_bar, self.root)
+        assign_rooms(matched_pairs, self.progress_bar, self.root)
 
         self.show_error("Matching finished")
 
@@ -82,7 +83,7 @@ class MatcherWindow(BaseWindow):
         rooms = rooms_db.find()
         table_data = [
             [
-                room.number,
+                room["number"],
                 *[student.get("username", "") for student in room["students"]],
             ]
             for room in rooms
@@ -115,7 +116,7 @@ class MatcherWindow(BaseWindow):
             rooms = rooms_db.find()
             table_data = [
                 [
-                    room.number,
+                    room["number"],
                     *[student.get("username", "") for student in room["students"]],
                 ]
                 for room in rooms

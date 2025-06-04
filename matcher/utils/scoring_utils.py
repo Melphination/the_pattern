@@ -1,4 +1,3 @@
-from matcher.utils.user_utils import User
 from utils.pattern_types import TIME_PATTERNS, LIKELY_PATTERNS, OFF_PATTERN
 from utils.time_utils import calculate_overlaps
 
@@ -11,7 +10,7 @@ PATTERN_WEIGHTS = {
 }
 
 
-def calculate_score(user1: User, user2: User) -> float:
+def calculate_score(user1, user2) -> float:
     """두 사용자 간 선호도 점수 계산"""
     total_score = 0
     for pattern, weight in PATTERN_WEIGHTS.items():
@@ -20,7 +19,7 @@ def calculate_score(user1: User, user2: User) -> float:
     return total_score
 
 
-def calculate_triplet_score(user1: User, user2: User, user3: User) -> float:
+def calculate_triplet_score(user1, user2, user3) -> float:
     """3인 조합의 평균 선호도 점수 계산"""
     score1 = calculate_score(user1, user2)
     score2 = calculate_score(user2, user3)
@@ -28,7 +27,7 @@ def calculate_triplet_score(user1: User, user2: User, user3: User) -> float:
     return (score1 + score2 + score3) / 3
 
 
-def passes_filtering(user1: User, user2: User) -> bool:
+def passes_filtering(user1, user2) -> bool:
     """매칭 필터링 통과 여부"""
     if not user1.is_compatible_with(user2):
         return False
@@ -41,10 +40,10 @@ def passes_filtering(user1: User, user2: User) -> bool:
     return sleep_compatible
 
 
-def calculate_pattern_difference(user1: User, user2: User, pattern: str) -> float:
+def calculate_pattern_difference(user1, user2, pattern: str) -> float:
     """특정 패턴에 대한 두 사용자 간 차이 계산"""
-    pattern1 = user1.summary[pattern]
-    pattern2 = user2.summary[pattern]
+    pattern1 = user1["summary"][pattern]
+    pattern2 = user2["summary"][pattern]
 
     if pattern in TIME_PATTERNS:
         return calculate_overlaps(pattern1, pattern2)
