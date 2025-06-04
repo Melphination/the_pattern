@@ -34,7 +34,7 @@ def validate_pattern_format(name, patterns):
     return True
 
 
-def stringify_pattern(self, pattern):
+def stringify_pattern(pattern):
     """패턴을 문자열로 변환"""
     pattern_type = type(pattern)
     if pattern_type is list:

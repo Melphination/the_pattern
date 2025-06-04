@@ -166,7 +166,7 @@ def can_match_pair(
         return False
 
     category = get_category(pair[0][0])
-    if pair.size == 2 and need_pairs[category] == 0:
+    if len(pair[0]) == 2 and need_pairs[category] == 0:
         return False
 
     return True
@@ -177,7 +177,7 @@ def update_matching_state(pair: List[Any], available_users: set, need_pairs: Lis
     if len(pair[0]) == 2:
         need_pairs[get_category(pair[0][0])] -= 1
 
-    for user in pair.users:
+    for user in pair[0]:
         available_users.remove(user)
 
 
@@ -195,7 +195,7 @@ def select_room_for_pair(
     pair: List[Any], available_rooms: Dict[int, List[Any]]
 ) -> Optional[Any]:
     """매칭 쌍에 적합한 방 선택"""
-    category = pair.category
+    category = get_category(pair[0][0])
     floor_map = {0: 5, 1: 4, 2: 3, 3: 2, 4: 2, 5: 2}
 
     target_floor = floor_map.get(category, 2)
@@ -235,5 +235,5 @@ def cleanup_rooms():
             room["students"] = ()
         rooms_db.update_one(
             {"number": room["number"]},
-            {"$set": {"students": tuple(), "reset": False}},
+            {"$set": { "reset": False}},
         )

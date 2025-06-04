@@ -66,9 +66,7 @@ class MatcherWindow(BaseWindow):
         self.progress_bar["value"] = 0
 
         # 매칭 실행
-        matched_pairs = execute_matching(
-            self.root, self.progress_bar
-        )
+        matched_pairs = execute_matching(self.root, self.progress_bar)
 
         # 방 배정
         assign_rooms(matched_pairs, self.progress_bar, self.root)

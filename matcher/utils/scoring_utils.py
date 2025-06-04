@@ -1,5 +1,7 @@
 from utils.pattern_types import TIME_PATTERNS, LIKELY_PATTERNS, OFF_PATTERN
 from utils.time_utils import calculate_overlaps
+from matcher.utils.user_utils import is_compatible_with
+
 
 PATTERN_WEIGHTS = {
     "sleep": 3,
@@ -29,7 +31,7 @@ def calculate_triplet_score(user1, user2, user3) -> float:
 
 def passes_filtering(user1, user2) -> bool:
     """매칭 필터링 통과 여부"""
-    if not user1.is_compatible_with(user2):
+    if not is_compatible_with(user1, user2):
         return False
 
     # 수면 시간과 소등 시간 기반 추가 필터링
