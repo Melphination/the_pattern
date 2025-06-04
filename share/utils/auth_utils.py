@@ -1,5 +1,5 @@
 from utils.secure import safety_check, valid_id, email_format_check
-from utils.user_utils import create_user
+from share.utils.user_utils import create_user
 
 
 def validate_signup_data(email, username, password, password_check):

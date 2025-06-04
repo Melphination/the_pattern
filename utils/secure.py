@@ -9,8 +9,8 @@ load_dotenv()
 charset = set("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_")
 
 
-# 안전한 비밀번호인지 판단하는 함수
 def safety_check(pw: str) -> bool:
+    """비밀번호 안전성 검사"""
     return (
         len(pw) >= 8
         and sum(int(c.isupper()) for c in pw) >= 2
@@ -20,6 +20,7 @@ def safety_check(pw: str) -> bool:
 
 
 def valid_id(id: str) -> bool:
+    """아이디 유효성 검사"""
     return len(set(id) - charset) == 0
 
 
@@ -27,8 +28,8 @@ def valid_id(id: str) -> bool:
 special = [22092]
 
 
-# 가능한 교번 반환
 def possible_number() -> List[int]:
+    """가능한 교번 반환"""
     last = datetime.now().year % 100
     # 3월 1일부터는 신입생 들어옴 가정
     if datetime.today().strftime("%m-%d") < "03-01":
@@ -36,9 +37,8 @@ def possible_number() -> List[int]:
     return special + list(range((last - 2) * 1000 + 1, (last + 1) * 1000))
 
 
-# 재학생이 맞는지 이메일 형식이 맞는지 확인
-# 형식이 맞으면 1 리턴, 틀리면 -1 리턴
 def email_format_check(email: str) -> bool:
+    """이메일 형식 확인"""
     if len(email) != 16 or not email.endswith("@sshs.hs.kr"):
         return False
     if int(email[:5]) in possible_number():
@@ -50,8 +50,8 @@ N = 8
 possible_chars = string.ascii_letters + string.digits
 
 
-# 이메일 인증을 위한 코드 생성
 def gen_code() -> str:
+    """인증 코드 생성"""
     return "".join(secrets.choice(possible_chars) for _ in range(N))
 
 
@@ -61,6 +61,7 @@ password = os.environ["NAVER_PW"]
 
 
 def send_verify_email(receipt) -> str:
+    """회원가입에서 이메일 인증 코드 전송"""
     code = gen_code()
     msg = MIMEText(code)
     msg["Subject"] = "THE PATTERN 인증 코드"
@@ -73,6 +74,7 @@ def send_verify_email(receipt) -> str:
 
 
 def send_pw_email(receipt) -> str:
+    """비밀번호 재설정을 위한 인증 코드 전송"""
     code = gen_code()
     msg = MIMEText(code)
     msg["Subject"] = "THE PATTERN 비밀번호 재설정"

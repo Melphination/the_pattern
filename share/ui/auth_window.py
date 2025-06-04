@@ -7,7 +7,7 @@ from utils.connect_db import rooms
 from share.ui.pattern_window import PatternWindow
 import argon2
 from share.utils.auth_utils import register_user, validate_signup_data
-from utils.user_utils import authenticate
+from share.utils.user_utils import authenticate
 from utils.secure import send_pw_email, send_verify_email
 from utils.connect_db import users
 
