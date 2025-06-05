@@ -27,9 +27,7 @@ def validate_pattern_format(name, patterns):
         ):
             return False
     if name == "early_bird":
-        return bool(re.fullmatch(r"\d+ \d+", patterns)) and int(
-            patterns.split(" ")[0]
-        ) <= int(patterns.split(" ")[1])
+        return bool(re.fullmatch(r"[01]*", patterns))
 
     return True
 
@@ -58,13 +56,11 @@ def save_patterns(username, sheet_data):
     while sheet_data.get(f"A{i}", "") != "":
         try:
             name, pattern = sheet_data[f"A{i}"].split(" ", 1)
-            if not validate_pattern_format(name, pattern):
+            if len(pattern) != 0 and not validate_pattern_format(name, pattern):
                 return False, f"Invalid format at A{i}: {name} {pattern}"
 
             if name == "early_bird":
-                amount, total = pattern.split(" ")
-                patterns[name][0] += int(amount)
-                patterns[name][1] += int(total)
+                patterns[name] = pattern
             else:
                 patterns[name].append(pattern)
 

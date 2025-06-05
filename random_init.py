@@ -16,7 +16,7 @@ genders = ["M", "F"]
 grades = [1, 2, 3]
 
 usernames = ["Penguin", "Admin"]
-emails = ["25039@sshs.hs.kr", "25999@sshs.hs.kr"]
+emails = ["25039@sshs.hs.kr", "26000@sshs.hs.kr"]
 
 users.insert_one(
     {
@@ -24,7 +24,7 @@ users.insert_one(
         "grade": 1,
         "username": "Admin",
         "pw": os.environ["ADMIN_PW"],
-        "email": "25999@sshs.hs.kr",
+        "email": "26000@sshs.hs.kr",
         "summary": {
             "sleep": [],
             "early_bird": 0.0,
@@ -34,13 +34,16 @@ users.insert_one(
         },
         "patterns": {
             "sleep": [],
-            "early_bird": [0, 0],
+            "early_bird": "",
             "light_off": [],
             "air": [],
             "study": [],
         },
         "roommate": [],
         "room": 500,
+        "admin": True,
+        "bonus": 1e10,
+        "minus": 0,
     }
 )
 
@@ -79,7 +82,7 @@ for username, email in zip(usernames[1:], emails[1:]):
                     f"2025:05:05:{random.randint(20, 25) % 24:02d}:{random.randint(0, 59):02d}:{random.randint(0, 59):02d}+P",
                     f"2025:05:05:{random.randint(6, 7):02d}:{random.randint(0, 59):02d}:{random.randint(0, 59):02d}-P",
                 ],
-                "early_bird": [1, 0, 1],
+                "early_bird": "",
                 "light_off": [
                     f"2025:05:05:{random.randint(14, 15):02d}:{random.randint(0, 59):02d}:{random.randint(0, 59):02d}1"
                 ],
@@ -95,17 +98,23 @@ for username, email in zip(usernames[1:], emails[1:]):
             "email": email,
             "roommate": [],
             "room": 500,
+            "admin": False,
+            "bonus": 0,
+            "minus": 0,
         }
     )
 
 users.insert_many(random_users)
 
 
-# 기숙사 방 번호 리스트 생성: 201–298, 301–398, 401–498, 501–598
-nums = list(range(201, 299))
-nums += list(range(301, 399))
-nums += list(range(401, 499))
-nums += list(range(501, 599))
+# 기숙사 방 번호 리스트 생성 (상벌점과 무관한 방)
+girl_nums = list(range(201, 299))  # TODO: 여자 기숙사 방번호
+basic_nums = list(range(301, 314))
+basic_nums += list(range(401, 476))
+basic_nums += list(range(501, 576))
+
+# 상벌점과 관련 있는 방 생성
+special_nums = list(range(451, 476)) + list(range(551, 576)) + list(range(365, 372))
 
 # 방 정보 삽입
 rooms.insert_many(
@@ -114,9 +123,35 @@ rooms.insert_many(
             "number": i,
             "students": tuple(),
             "floor": i // 100,
-            "place": "old",
             "reset": False,
+            "category": [5 - i // 100],
         }
-        for i in nums
+        for i in basic_nums
+    ]
+)
+
+rooms.insert_many(
+    [
+        {
+            "number": i,
+            "students": tuple(),
+            "floor": i // 100,
+            "reset": False,
+            "category": [3, 4, 5],
+        }
+        for i in girl_nums
+    ]
+)
+
+rooms.insert_many(
+    [
+        {
+            "number": i,
+            "students": tuple(),
+            "floor": i // 100,
+            "reset": False,
+            "category": [6],
+        }
+        for i in special_nums
     ]
 )

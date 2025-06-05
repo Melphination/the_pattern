@@ -2,7 +2,7 @@ from datetime import datetime
 import secrets, os, smtplib, string
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
-from typing import List
+from typing import Set
 
 
 load_dotenv()
@@ -24,17 +24,24 @@ def valid_id(id: str) -> bool:
     return len(set(id) - charset) == 0
 
 
-# 휴학생 등의 특별한 사람들의 교번은 special에 저장
-special = [22092]
+# 휴학생 등의 추가해야 하는 사람들의 교번
+special_add = {22092}
+
+# 휴학생 등의 제외해야 되는 사람들의 교번
+special_minus = set()
 
 
-def possible_number() -> List[int]:
+def possible_number() -> Set[int]:
     """가능한 교번 반환"""
     last = datetime.now().year % 100
     # 3월 1일부터는 신입생 들어옴 가정
     if datetime.today().strftime("%m-%d") < "03-01":
         last -= 1
-    return special + list(range((last - 2) * 1000 + 1, (last + 1) * 1000))
+    return (
+        special_add
+        | set(range((last - 2) * 1000 + 1, (last + 1) * 1000))
+        - special_minus
+    )
 
 
 def email_format_check(email: str) -> bool:

@@ -15,6 +15,8 @@ def combine():
             i = 0
             while i < len(patterns):
                 pat1 = patterns[i]
+                if len(pat1) < 2:
+                    print(pat1)
                 sgn1 = pat1[-2]  # 끝/시작: '+'(시작) 또는 '-'(끝끝)
                 mode1 = pat1[-1]  # 패턴 추가 주체: 'A'(시스템) 또는 'P'(사람)
 

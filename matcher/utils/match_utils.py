@@ -3,7 +3,7 @@ from typing import List, Dict, Optional, Any
 from random import shuffle, choice
 import tkinter as tk
 
-from analysis.combine import combine
+from utils.combine import combine
 from utils.connect_db import rooms as rooms_db
 from utils.connect_db import users as users_db
 from utils.summary import summarize
@@ -46,7 +46,7 @@ def assign_rooms(matched_pairs: List[Any], progress_bar, root: tk.Tk):
     shuffle(matched_pairs)
 
     # 층별 사용 가능한 방 조회
-    available_rooms = get_available_rooms_by_floor()
+    available_rooms = get_available_rooms_by_category()
 
     for pair in matched_pairs:
         room = select_room_for_pair(pair, available_rooms)
@@ -69,7 +69,7 @@ def preprocess_data(progress_bar, root):
     root.update()
 
     print("패턴 정리")
-    users = users_db.find()
+    users = users_db.find({"admin": False})
     for user in users:
         summary = summarize(user)
         users_db.update_one({"username": user}, {"$set": {"summary": summary}})
@@ -80,13 +80,13 @@ def preprocess_data(progress_bar, root):
 
 def load_and_shuffle_users() -> List[List[Any]]:
     """사용자 데이터를 카테고리별로 로드하고 셔플"""
-    categories = [("M", 1), ("M", 2), ("M", 3), ("F", 1), ("F", 2), ("F", 3)]
-
-    users_by_category = []
-    for gender, grade in categories:
-        users = list(users_db.find({"gender": gender, "grade": grade}))
-        shuffle(users)
-        users_by_category.append(users)
+    users_by_category = [[]] * 7
+    users = users_db.find({"admin": False})
+    for user in users:
+        category = get_category(user)
+        users_by_category[category].append(user)
+    for i in range(len(users_by_category)):
+        shuffle(users_by_category[i])
 
     return users_by_category
 
@@ -181,14 +181,13 @@ def update_matching_state(pair: List[Any], available_users: set, need_pairs: Lis
         available_users.remove(user)
 
 
-def get_available_rooms_by_floor() -> Dict[int, List[Any]]:
-    """층별 사용 가능한 방 조회"""
-    return {
-        5: list(rooms_db.find({"floor": 5, "reset": False})),
-        4: list(rooms_db.find({"floor": 4, "reset": False})),
-        3: list(rooms_db.find({"floor": 3, "reset": False})),
-        2: list(rooms_db.find({"floor": 2, "reset": False})),
-    }
+def get_available_rooms_by_category() -> Dict[int, List[Any]]:
+    """방을 종류별로 분류"""
+    rooms = list(rooms_db.aggregate([{"$unwind": "$category"}]))
+    rooms_by_category = defaultdict(list)
+    for room in rooms:
+        rooms_by_category[room["category"]].append(room)
+    return rooms_by_category
 
 
 def select_room_for_pair(
@@ -196,10 +195,8 @@ def select_room_for_pair(
 ) -> Optional[Any]:
     """매칭 쌍에 적합한 방 선택"""
     category = get_category(pair[0][0])
-    floor_map = {0: 5, 1: 4, 2: 3, 3: 2, 4: 2, 5: 2}
 
-    target_floor = floor_map.get(category, 2)
-    rooms = available_rooms.get(target_floor, [])
+    rooms = available_rooms.get(category, [])
 
     if rooms:
         room = choice(rooms)
@@ -235,5 +232,5 @@ def cleanup_rooms():
             room["students"] = ()
         rooms_db.update_one(
             {"number": room["number"]},
-            {"$set": {"reset": False}},
+            {"$set": {"students": room["students"], "reset": False}},
         )

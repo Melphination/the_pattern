@@ -43,9 +43,9 @@ def group_similar_times(times, max_difference_minutes=45):
     return grouped_averages
 
 
-def extract_time_data(patterns):
-    """패턴 데이터에서 시간 정보 추출"""
-    times = defaultdict(list)
+def organize(patterns):
+    """패턴 데이터를 분석하여 일부 정리"""
+    organized = defaultdict(list)
 
     for pattern_name, pattern_data in patterns.items():
         if pattern_name in ["sleep", "air", "study"]:
@@ -53,20 +53,20 @@ def extract_time_data(patterns):
             for entry in pattern_data:
                 time_seconds = to_sec(parse_time(entry[-10:-2]))
                 sign = entry[-2]  # '+' 또는 '-'
-                times[f"{pattern_name}{sign}"].append(time_seconds)
+                organized[f"{pattern_name}{sign}"].append(time_seconds)
 
         elif pattern_name == "light_off":
-            times[pattern_name] = pattern_data
+            organized[pattern_name] = pattern_data
 
         elif pattern_name == "early_bird":
-            # [합계, 개수] 형태로 저장
-            times[pattern_name] = [sum(pattern_data), len(pattern_data)]
+            # [얼리버드 횟수, 기록 횟수] 형태로 저장
+            organized[pattern_name] = [pattern_data.count("1"), len(pattern_data)]
 
-    return times
+    return organized
 
 
 def calculate_statistics(times):
-    """시간 데이터로부터 통계 계산"""
+    """패턴 데이터로부터 통계 계산"""
     result = {
         "sleep": [],
         "early_bird": 0.0,
@@ -75,12 +75,12 @@ def calculate_statistics(times):
         "study": [],
     }
 
-    grouped_times = defaultdict(list)
+    grouped_patterns = defaultdict(list)
 
     for key, time_list in times.items():
         if key.endswith(("+", "-")):
             # 시간 그룹화 및 평균 계산
-            grouped_times[key] = group_similar_times(time_list)
+            grouped_patterns[key] = group_similar_times(time_list)
 
         elif key == "early_bird":
             # 조기 기상 비율 계산
@@ -92,7 +92,7 @@ def calculate_statistics(times):
             on_count = len([entry for entry in time_list if entry[-1] == "1"])
             result[key] = on_count / max(1, len(time_list))
 
-    return result, grouped_times
+    return result, grouped_patterns
 
 
 def create_time_ranges(grouped_times):
@@ -133,11 +133,10 @@ def create_time_ranges(grouped_times):
 
 def summarize(data):
     """패턴 데이터를 분석하여 요약 통계 생성"""
-    # 데이터 형식 통일
     patterns = data["patterns"]
 
-    # 시간 데이터 추출
-    times = extract_time_data(patterns)
+    # 데이터 일부 정리
+    times = organize(patterns)
 
     # 통계 계산
     result, grouped_times = calculate_statistics(times)

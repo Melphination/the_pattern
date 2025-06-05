@@ -1,9 +1,12 @@
 from utils.secure import safety_check, valid_id, email_format_check
 from share.utils.user_utils import create_user
+from utils.connect_db import users
 
 
 def validate_signup_data(email, username, password, password_check):
     """회원가입 데이터 유효성 검사"""
+    if users.find_one({"username": username}) or users.find_one({"email": email}):
+        return False, "이미 존재하는 아이디 또는 이메일입니다."
     if password != password_check:
         return False, "비밀번호가 일치하지 않습니다."
 
