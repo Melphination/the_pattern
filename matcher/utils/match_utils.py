@@ -235,5 +235,5 @@ def cleanup_rooms():
             room["students"] = ()
         rooms_db.update_one(
             {"number": room["number"]},
-            {"$set": { "reset": False}},
+            {"$set": {"reset": False}},
         )
