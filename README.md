@@ -1,7 +1,5 @@
 # THE PATTERN
 ## ATPase
-## TODO
-- 아이디 대신 교번을 시트에 표시
 ## Credit
 ### AI
 1. Ideogram: 로고 이미지 생성
