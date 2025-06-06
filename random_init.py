@@ -41,8 +41,8 @@ users.insert_one(
         },
         "roommate": [],
         "room": 500,
-        "admin": True,
-        "bonus": 1e10,
+        "exclude": True,
+        "bonus": 0,
         "minus": 0,
     }
 )
@@ -58,12 +58,12 @@ for _ in range(150):
     usernames.append(username)
     email = "25039@sshs.hs.kr"
     while email in emails:
-        email = f"{random.randint(23000, 25999)}@sshs.hs.kr"
+        email = f"{random.randint(23001, 25999)}@sshs.hs.kr"
     emails.append(email)
 
 # 150명의 무작위 사용자 삽입
 random_users = []
-for username, email in zip(usernames[1:], emails[1:]):
+for username, email in zip(usernames[2:], emails[2:]):
     random_users.append(
         {
             "gender": random.choice(genders),
@@ -98,23 +98,13 @@ for username, email in zip(usernames[1:], emails[1:]):
             "email": email,
             "roommate": [],
             "room": 500,
-            "admin": False,
-            "bonus": 0,
-            "minus": 0,
+            "exclude": False,
+            "bonus": random.randint(0, 10),
+            "minus": random.randint(0, 10),
         }
     )
 
 users.insert_many(random_users)
-
-
-# 기숙사 방 번호 리스트 생성 (상벌점과 무관한 방)
-girl_nums = list(range(201, 299))  # TODO: 여자 기숙사 방번호
-basic_nums = list(range(301, 314))
-basic_nums += list(range(401, 476))
-basic_nums += list(range(501, 576))
-
-# 상벌점과 관련 있는 방 생성
-special_nums = list(range(451, 476)) + list(range(551, 576)) + list(range(365, 372))
 
 # 방 정보 삽입
 rooms.insert_many(
@@ -124,9 +114,35 @@ rooms.insert_many(
             "students": tuple(),
             "floor": i // 100,
             "reset": False,
-            "category": [5 - i // 100],
+            "category": [0],
         }
-        for i in basic_nums
+        for i in list(range(501, 519)) +list(range(520, 539))
+    ]
+)
+
+rooms.insert_many(
+    [
+        {
+            "number": i,
+            "students": tuple(),
+            "floor": i // 100,
+            "reset": False,
+            "category": [1, 2],
+        }
+        for i in list(range(403, 419)) + list(range(420, 439)) + list(range(301, 312)) + list(range(313, 324))
+    ]
+)
+
+rooms.insert_many(
+    [
+        {
+            "number": i,
+            "students": tuple(),
+            "floor": i // 100,
+            "reset": False,
+            "category": [0, 1, 2],
+        }
+        for i in range(401, 403)
     ]
 )
 
@@ -139,7 +155,7 @@ rooms.insert_many(
             "reset": False,
             "category": [3, 4, 5],
         }
-        for i in girl_nums
+        for i in range(201, 223)
     ]
 )
 
@@ -152,6 +168,6 @@ rooms.insert_many(
             "reset": False,
             "category": [6],
         }
-        for i in special_nums
+        for i in list(range(361, 372)) + list(range(451, 476))
     ]
 )

@@ -71,7 +71,8 @@ def save_patterns(username, sheet_data):
 
     # 중복 제거
     for key, value in patterns.items():
-        patterns[key] = list(set(value))
+        if key != "early_bird":
+            patterns[key] = list(set(value))
 
     users.update_one({"username": username}, {"$set": {"patterns": patterns}})
     return True, ""
@@ -100,15 +101,17 @@ def get_roommate_patterns_display(username):
 
     # 룸메이트 요약 정보 업데이트
     for roommate in roommates:
-        roommate_user = users.find_one({"username": roommate})
+        email = f"{roommate}@sshs.hs.kr"
+        roommate_user = users.find_one({"email": email})
         if roommate_user:
             summary = summarize(roommate_user)
-            users.update_one({"username": roommate}, {"$set": {"summary": summary}})
+            users.update_one({"email": email}, {"$set": {"summary": summary}})
 
     # 룸메이트 패턴 데이터 구성
     roommate_patterns = []
     for roommate in roommates:
-        roommate_user = users.find_one({"username": roommate})
+        email = f"{roommate}@sshs.hs.kr"
+        roommate_user = users.find_one({"email": email})
         if roommate_user:
             patterns = [
                 f"{name} {stringify_pattern(pattern)}"

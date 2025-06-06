@@ -69,7 +69,7 @@ def preprocess_data(progress_bar, root):
     root.update()
 
     print("패턴 정리")
-    users = users_db.find({"admin": False})
+    users = users_db.find({"exclude": False})
     for user in users:
         summary = summarize(user)
         users_db.update_one({"username": user}, {"$set": {"summary": summary}})
@@ -80,10 +80,12 @@ def preprocess_data(progress_bar, root):
 
 def load_and_shuffle_users() -> List[List[Any]]:
     """사용자 데이터를 카테고리별로 로드하고 셔플"""
-    users_by_category = [[]] * 7
-    users = users_db.find({"admin": False})
+    users_by_category = []
+    users = users_db.find({"exclude": False})
     for user in users:
         category = get_category(user)
+        if len(users_by_category) <= category:
+            users_by_category.extend([[] for _ in range(category - len(users_by_category) + 1)])
         users_by_category[category].append(user)
     for i in range(len(users_by_category)):
         shuffle(users_by_category[i])
@@ -137,7 +139,9 @@ def perform_greedy_matching(
     matched_pairs = []
     available_users = []
     for users in users_by_category:
-        available_users.extend(users)
+        for user in users:
+            if user not in available_users:
+                available_users.append(user)
 
     # 각 카테고리별 2인 조합 필요 개수 계산
     need_pairs = [calculate_needed_pairs(len(users)) for users in users_by_category]
@@ -205,9 +209,12 @@ def select_room_for_pair(
     return None
 
 
+def get_student_number(user):
+    return user["email"][:5]
+
 def assign_pair_to_room(pair: List[Any], room):
     """매칭 쌍을 방에 배정"""
-    user_data = tuple({"username": user["username"]} for user in pair[0])
+    user_data = tuple(get_student_number(user) for user in pair[0])
     rooms_db.update_one(
         {"number": room["number"]},
         {"$set": {"students": user_data, "reset": True}},
@@ -216,7 +223,7 @@ def assign_pair_to_room(pair: List[Any], room):
     # 사용자 정보 업데이트
     for user in pair[0]:
         roommates = [
-            u["username"] for u in pair[0] if u["username"] != user["username"]
+            get_student_number(u) for u in pair[0] if u["username"] != user["username"]
         ]
         users_db.update_one(
             {"username": user["username"]},

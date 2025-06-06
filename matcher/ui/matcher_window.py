@@ -82,9 +82,9 @@ class MatcherWindow(BaseWindow):
         table_data = [
             [
                 room["number"],
-                *[student.get("username", "") for student in room["students"]],
+                *[student for student in room["students"]],
             ]
-            for room in rooms
+            for room in sorted(rooms, key=lambda x: x["number"])
         ]
 
         self.rooms_sheet = Sheet(
@@ -115,7 +115,7 @@ class MatcherWindow(BaseWindow):
             table_data = [
                 [
                     room["number"],
-                    *[student.get("username", "") for student in room["students"]],
+                    *[student for student in room["students"]],
                 ]
                 for room in rooms
             ]

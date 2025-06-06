@@ -2,8 +2,6 @@
 ## ATPase
 ## TODO
 - 아이디 대신 교번을 시트에 표시
-- Admin도 매칭되는 버그 해결
-- 인증 코드 시간 제한 추가
 ## Credit
 ### AI
 1. Ideogram: 로고 이미지 생성

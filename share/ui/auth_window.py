@@ -8,8 +8,11 @@ from share.ui.pattern_window import PatternWindow
 import argon2
 from share.utils.auth_utils import register_user, validate_signup_data
 from share.utils.user_utils import authenticate
-from utils.secure import send_pw_email, send_verify_email
+from utils.verification import send_pw_email, send_verify_email
 from utils.connect_db import users
+from datetime import datetime, timedelta
+
+
 
 
 class AuthWindow(BaseWindow):
@@ -211,6 +214,7 @@ class AuthWindow(BaseWindow):
                 grade_var,
                 room_var,
                 code,
+                datetime.now(),
                 mode="signup",
             )
         except Exception as e:
@@ -225,6 +229,7 @@ class AuthWindow(BaseWindow):
         grade_var,
         room_var,
         code,
+        time,
         mode="signup",
     ):
         """인증 코드 입력 화면"""
@@ -248,6 +253,7 @@ class AuthWindow(BaseWindow):
                     room_var,
                     code_var.get(),
                     code,
+                    time,
                     [code_label, code_entry, code_button],
                 ),
             )
@@ -256,7 +262,7 @@ class AuthWindow(BaseWindow):
                 self.root,
                 text="인증",
                 command=lambda: self.verify_password_reset_code(
-                    email, code_var.get(), code, [code_label, code_entry, code_button]
+                    email, code_var.get(), code, time, [code_label, code_entry, code_button]
                 ),
             )
 
@@ -272,6 +278,7 @@ class AuthWindow(BaseWindow):
         room_var,
         entered_code,
         correct_code,
+        time,
         widgets,
     ):
         """회원가입 인증 코드 검증"""
@@ -281,14 +288,16 @@ class AuthWindow(BaseWindow):
             self.show_error("인증 코드가 틀렸습니다.")
         elif not rooms.find({"number": room_var.get()}):
             self.show_error("존재하지 않는 방 번호입니다.")
+        elif datetime.now() - time > timedelta(minutes=10):
+            self.show_error("인증 시간이 만료되었습니다.")
         else:
             success, error_message = register_user(
                 email,
                 username_var.get(),
                 password_var.get(),
                 gender_var.get(),
-                grade_var.get(),
-                room_var.get(),
+                int(grade_var.get()),
+                int(room_var.get()),
             )
             if success:
                 back_to_menu()
@@ -322,17 +331,19 @@ class AuthWindow(BaseWindow):
             code = send_pw_email(email)
             self.clear_widgets(widgets)
             self.show_verification_code_input(
-                email, None, None, None, None, None, code, mode="password_reset"
+                email, None, None, None, None, None, code, datetime.now(), mode="password_reset"
             )
         except Exception as e:
             self.show_error(f"인증 코드 전송 실패: {str(e)}")
 
-    def verify_password_reset_code(self, email, entered_code, correct_code, widgets):
+    def verify_password_reset_code(self, email, entered_code, correct_code, time, widgets):
         """비밀번호 재설정 인증 코드 검증"""
         self.clear_widgets(widgets)
 
         if entered_code != correct_code:
             self.show_error("인증 코드가 틀렸습니다.")
+        elif datetime.now() - time > timedelta(minutes=10):
+            self.show_error("인증 시간이 만료되었습니다.")
         else:
             self.show_new_password_input(email)
 

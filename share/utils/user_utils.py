@@ -21,7 +21,7 @@ def create_user(
         "pw": ph.hash(password),
         "patterns": {
             "sleep": ["2025:05:05:23:00:00+A", "2025:05:06:07:00:00-A"],
-            "early_bird": [0, 0],
+            "early_bird": "",
             "light_off": ["2025:05:05:23:00:000"],
             "air": ["2025:05:05:12:00:00+A", "2025:05:05:13:00:00-A"],
             "study": ["2025:05:05:16:00:00+A", "2025:05:05:18:00:00-A"],
@@ -37,6 +37,9 @@ def create_user(
         "gender": gender,
         "grade": grade,
         "room": room,
+        "exclude": False,
+        "bonus": 0,
+        "minus": 0,
     }
     users.insert_one(user_data)
 

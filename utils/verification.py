@@ -54,7 +54,7 @@ def email_format_check(email: str) -> bool:
 
 
 N = 8
-possible_chars = string.ascii_letters + string.digits
+possible_chars = string.digits
 
 
 def gen_code() -> str:

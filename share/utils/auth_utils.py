@@ -1,4 +1,4 @@
-from utils.secure import safety_check, valid_id, email_format_check
+from utils.verification import safety_check, valid_id, email_format_check
 from share.utils.user_utils import create_user
 from utils.connect_db import users
 

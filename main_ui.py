@@ -55,7 +55,7 @@ def main_ui():
         mode_button.pack()
 
         # 창 크기 설정
-        root.geometry("1000x1000")
+        root.geometry("1200x1000")
 
         # 메인 이벤트 루프 시작
         root.mainloop()
