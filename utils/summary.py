@@ -1,5 +1,7 @@
 from collections import defaultdict
 from utils.time_utils import parse_time, to_sec, to_time
+import math
+from utils.pattern_types import TIME_PATTERNS, LIKELY_PATTERNS, OFF_PATTERN
 
 
 def calculate_time_difference(time1: int, time2: int) -> int:
@@ -9,6 +11,20 @@ def calculate_time_difference(time1: int, time2: int) -> int:
     """
     return min(time1 - time2, time1 + 24 * 3600 - time2)
 
+def circular_mean(times):
+    """ Circular Mean 계산 """
+    angles = [2 * math.pi * (t / (24 * 3600)) for t in times]
+    x_vals = [math.cos(a) for a in angles]
+    y_vals = [math.sin(a) for a in angles]
+    
+    avg_x = sum(x_vals) / len(x_vals)
+    avg_y = sum(y_vals) / len(y_vals)
+    
+    avg_angle = math.atan2(avg_y, avg_x)
+    if avg_angle < 0:
+        avg_angle += 2 * math.pi
+
+    return (avg_angle / (2 * math.pi)) * 24 * 3600
 
 def group_similar_times(times, max_difference_minutes=45):
     """비슷한 시간들을 그룹화하고 평균값 계산"""
@@ -22,7 +38,7 @@ def group_similar_times(times, max_difference_minutes=45):
     while i < len(times):
         group = [times[i]]
 
-        # 현재 시간과 45분 이내 차이나는 시간들을 그룹에 추가
+        # 45분 이내 차이나는 시간들을 그룹에 추가
         j = i + 1
         while j < len(times):
             if (
@@ -34,9 +50,9 @@ def group_similar_times(times, max_difference_minutes=45):
                 break
             j += 1
 
-        # 그룹의 평균값 계산
-        average_time = round(sum(group) / len(group))
-        grouped_averages.append(average_time)
+        # 그룹의 평균값 계산 (circular mean)
+        average_time = circular_mean(group)
+        grouped_averages.append([average_time, len(group)])
 
         i = max(j, i + 1)
 
@@ -48,17 +64,17 @@ def organize(patterns):
     organized = defaultdict(list)
 
     for pattern_name, pattern_data in patterns.items():
-        if pattern_name in ["sleep", "air", "study"]:
+        if pattern_name in TIME_PATTERNS:
             # 시간 패턴 처리 (마지막 문자로 +/- 구분)
             for entry in pattern_data:
                 time_seconds = to_sec(parse_time(entry[-10:-2]))
                 sign = entry[-2]  # '+' 또는 '-'
                 organized[f"{pattern_name}{sign}"].append(time_seconds)
 
-        elif pattern_name == "light_off":
+        elif pattern_name == OFF_PATTERN:
             organized[pattern_name] = pattern_data
 
-        elif pattern_name == "early_bird":
+        elif pattern_name == LIKELY_PATTERNS:
             # [얼리버드 횟수, 기록 횟수] 형태로 저장
             organized[pattern_name] = [pattern_data.count("1"), len(pattern_data)]
 
@@ -99,7 +115,7 @@ def create_time_ranges(grouped_times):
     """시작 시간(+)과 종료 시간(-)을 매칭하여 시간 범위 생성"""
     time_ranges = defaultdict(list)
 
-    for activity in ["sleep", "air", "study"]:
+    for activity in TIME_PATTERNS:
         start_times = grouped_times.get(f"{activity}+", [])
         end_times = grouped_times.get(f"{activity}-", [])
 
@@ -136,10 +152,16 @@ def summarize(data):
     patterns = data["patterns"]
 
     # 데이터 일부 정리
-    times = organize(patterns)
+    organized = organize(patterns)
 
     # 통계 계산
-    result, grouped_times = calculate_statistics(times)
+    result, grouped_times = calculate_statistics(organized)
+
+    # 구한 시간대에서 상위 2개의 시간대만 고려
+    for pattern in TIME_PATTERNS:
+        for sign in "+-":
+            grouped_times[pattern + sign].sort(key=lambda x: x[1])
+            grouped_times[pattern + sign] = list(map(lambda x: x[0], grouped_times[pattern][-2:])) # 시간대만 남김
 
     # 시간 범위 생성
     time_ranges = create_time_ranges(grouped_times)
