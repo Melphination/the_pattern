@@ -7,8 +7,7 @@ from datetime import datetime
 def validate_date_format(date):
     try:
         datetime.strptime(date, "%Y:%m:%d:%H:%M:%S")
-    except Exception as e:
-        print(e)
+    except:
         return False
     else:
         return True
@@ -41,7 +40,7 @@ def stringify_pattern(pattern):
         return str(pattern)
     elif pattern_type is str:
         return pattern
-    raise ValueError("Invalid pattern format")
+    raise "포맷이 맞지 않습니다."
 
 
 def save_patterns(username, sheet_data):
@@ -57,15 +56,15 @@ def save_patterns(username, sheet_data):
         try:
             name, pattern = sheet_data[f"A{i}"].split(" ", 1)
             if len(pattern) != 0 and not validate_pattern_format(name, pattern):
-                return False, f"Invalid format at A{i}: {name} {pattern}"
+                return False, f"A{i}에서 포맷이 맞지 않습니다."
 
             if name == "early_bird":
                 patterns[name] = pattern
             else:
                 patterns[name].append(pattern)
 
-        except ValueError as e:
-            return False, f"Invalid format at A{i}: {e}"
+        except:
+            return False, f"A{i}에서 포맷이 맞지 않습니다."
 
         i += 1
 

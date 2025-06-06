@@ -22,6 +22,12 @@ def validate_signup_data(email, username, password, password_check):
     if not email_format_check(email):
         return False, "이메일 형식이 맞지 않거나 재학생이 아닙니다."
 
+    email_exists = users.find_one({"email": email})
+    username_exists = users.find_one({"username": username})
+
+    if email_exists or username_exists:
+        return False, "이메일 또는 아이디가 중복되어 있습니다."
+
     return True, ""
 
 
@@ -30,5 +36,5 @@ def register_user(email, username, password, gender, grade, room):
     try:
         create_user(email, username, password, gender, grade, room)
         return True, ""
-    except ValueError as e:
-        return False, str(e)
+    except:
+        return False, "사용자 등록을 실패했습니다."

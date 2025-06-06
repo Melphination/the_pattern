@@ -20,6 +20,7 @@ ex. 2025:05:05:23:00:00에 룸메이트를 위해 소등하였으면, light_off�
 early_bird: 0101 같이 얼리버드를 한 날에는 1, 얼리버드를 하지 않은 날에는 0을 뛰어쓰기 없이 입력
 """
 
+
 class PatternWindow(BaseWindow):
     def __init__(self, root):
         super().__init__(root)
@@ -29,9 +30,7 @@ class PatternWindow(BaseWindow):
         self.root.title(f"패턴 공유 플랫폼 - {username}")
 
         # 포맷 설명
-        format_label = ttk.Label(
-            self.root, text=description,  justify="center"
-        )
+        format_label = ttk.Label(self.root, text=description, justify="center")
         format_label.pack()
 
         # 저장 버튼

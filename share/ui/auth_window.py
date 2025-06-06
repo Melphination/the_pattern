@@ -13,8 +13,6 @@ from utils.connect_db import users
 from datetime import datetime, timedelta
 
 
-
-
 class AuthWindow(BaseWindow):
     def __init__(self, root):
         super().__init__(root)
@@ -217,8 +215,8 @@ class AuthWindow(BaseWindow):
                 datetime.now(),
                 mode="signup",
             )
-        except Exception as e:
-            self.show_error(f"인증 코드 전송 실패: {str(e)}")
+        except:
+            self.show_error("인증 코드 전송 실패")
 
     def show_verification_code_input(
         self,
@@ -262,7 +260,11 @@ class AuthWindow(BaseWindow):
                 self.root,
                 text="인증",
                 command=lambda: self.verify_password_reset_code(
-                    email, code_var.get(), code, time, [code_label, code_entry, code_button]
+                    email,
+                    code_var.get(),
+                    code,
+                    time,
+                    [code_label, code_entry, code_button],
                 ),
             )
 
@@ -331,12 +333,22 @@ class AuthWindow(BaseWindow):
             code = send_pw_email(email)
             self.clear_widgets(widgets)
             self.show_verification_code_input(
-                email, None, None, None, None, None, code, datetime.now(), mode="password_reset"
+                email,
+                None,
+                None,
+                None,
+                None,
+                None,
+                code,
+                datetime.now(),
+                mode="password_reset",
             )
-        except Exception as e:
-            self.show_error(f"인증 코드 전송 실패: {str(e)}")
+        except:
+            self.show_error("인증 코드 전송 실패")
 
-    def verify_password_reset_code(self, email, entered_code, correct_code, time, widgets):
+    def verify_password_reset_code(
+        self, email, entered_code, correct_code, time, widgets
+    ):
         """비밀번호 재설정 인증 코드 검증"""
         self.clear_widgets(widgets)
 
@@ -370,5 +382,5 @@ class AuthWindow(BaseWindow):
                 {"email": email}, {"$set": {"pw": self.ph.hash(new_password)}}
             )
             back_to_menu()
-        except Exception as e:
-            self.show_error(f"비밀번호 변경 실패: {str(e)}")
+        except:
+            self.show_error("비밀번호 변경 실패")

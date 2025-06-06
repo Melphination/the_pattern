@@ -116,7 +116,7 @@ rooms.insert_many(
             "reset": False,
             "category": [0],
         }
-        for i in list(range(501, 519)) +list(range(520, 539))
+        for i in list(range(501, 519)) + list(range(520, 539))
     ]
 )
 
@@ -129,7 +129,10 @@ rooms.insert_many(
             "reset": False,
             "category": [1, 2],
         }
-        for i in list(range(403, 419)) + list(range(420, 439)) + list(range(301, 312)) + list(range(313, 324))
+        for i in list(range(403, 419))
+        + list(range(420, 439))
+        + list(range(301, 312))
+        + list(range(313, 324))
     ]
 )
 

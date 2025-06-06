@@ -9,12 +9,6 @@ def create_user(
     email: str, username: str, password: str, gender: str, grade: int, room: int
 ):
     """새 사용자를 데이터베이스에 등록"""
-    email_exists = users.find_one({"email": email})
-    username_exists = users.find_one({"username": username})
-
-    if email_exists or username_exists:
-        raise ValueError("이메일 또는 아이디가 중복되어 있습니다.")
-
     user_data = {
         "username": username,
         "email": email,

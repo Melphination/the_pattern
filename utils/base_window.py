@@ -23,6 +23,8 @@ class BaseWindow:
     def show_error(self, message):
         """에러 메시지 표시"""
         self.clear_errors()
-        error_label = ttk.Label(self.root, text=message, wraplength=300, justify="center")
+        error_label = ttk.Label(
+            self.root, text=message, wraplength=300, justify="center"
+        )
         error_label.pack(anchor="w")
         self.error_labels.append(error_label)

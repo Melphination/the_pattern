@@ -19,6 +19,5 @@ try:
 
     users = client["SSHS-Matcher"]["User"]
     rooms = client["SSHS-Matcher"]["Room"]
-except Exception as e:
-    print(e)
+except:
     sys.exit()

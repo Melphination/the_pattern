@@ -85,7 +85,9 @@ def load_and_shuffle_users() -> List[List[Any]]:
     for user in users:
         category = get_category(user)
         if len(users_by_category) <= category:
-            users_by_category.extend([[] for _ in range(category - len(users_by_category) + 1)])
+            users_by_category.extend(
+                [[] for _ in range(category - len(users_by_category) + 1)]
+            )
         users_by_category[category].append(user)
     for i in range(len(users_by_category)):
         shuffle(users_by_category[i])
@@ -211,6 +213,7 @@ def select_room_for_pair(
 
 def get_student_number(user):
     return user["email"][:5]
+
 
 def assign_pair_to_room(pair: List[Any], room):
     """매칭 쌍을 방에 배정"""

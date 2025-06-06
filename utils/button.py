@@ -18,8 +18,8 @@ class Button(ttk.Button):
         # 사운드 재생
         try:
             play(resource_path("sounds/button.mp3"))
-        except Exception as e:
-            print(f"Sound play failed: {e}")
+        except:
+            print("Sound play failed")
 
         # 원래의 command 실행
         self.command()

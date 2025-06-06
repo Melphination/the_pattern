@@ -39,8 +39,7 @@ def possible_number() -> Set[int]:
         last -= 1
     return (
         special_add
-        | set(range((last - 2) * 1000 + 1, (last + 1) * 1000))
-        - special_minus
+        | set(range((last - 2) * 1000 + 1, (last + 1) * 1000)) - special_minus
     )
 
 
