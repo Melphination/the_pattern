@@ -12,7 +12,10 @@ def calculate_time_difference(time1: int, time2: int) -> int:
     return min(time1 - time2, time1 + 24 * 3600 - time2)
 
 def circular_mean(times):
-    """ Circular Mean 계산 """
+    """
+    Circular Mean 계산
+    23:00과 01:00의 평균을 00:00으로 계산
+    """
     angles = [2 * math.pi * (t / (24 * 3600)) for t in times]
     x_vals = [math.cos(a) for a in angles]
     y_vals = [math.sin(a) for a in angles]
