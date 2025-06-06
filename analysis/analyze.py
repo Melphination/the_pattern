@@ -2,6 +2,7 @@ from analysis.inputs import sensors, SensorType
 from utils.pattern_types import TIME_PATTERNS, OFF_PATTERN
 from utils.connect_db import users
 from datetime import datetime
+import time
 
 # 행동 패턴 별로 사용되는 센서 조합 정의
 combinations = {
@@ -124,3 +125,4 @@ def analyze():
                             {"email": email}, {"$set": {"patterns": new_patterns}}
                         )
                         print(f"Added pattern {pattern} to {user['username']}")
+        time.sleep(5) # 우연적인 변화의 영향 최소화
